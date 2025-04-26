@@ -11,6 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <meta name="google-site-verification" content="QcbyU9ulSTslAaeS9j0MmZGr0ZdAR7c3RvstcFuKYsk" />
         <link rel="icon" href="/images/logo-hr.png" sizes="any" />
       </head>
       <body className={inter.className}>{children}

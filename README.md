@@ -95,6 +95,7 @@ Follow these simple steps to run the project on your machine:
 5. **Open your browser and visit**:
    ```text
    http://localhost:3000
+   http://127.0.0.1:80
    ```
 
 ---

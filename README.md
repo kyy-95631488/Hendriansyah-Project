@@ -74,22 +74,22 @@ Follow these simple steps to run the project on your machine:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/your-repo.git
+   git clone https://github.com/kyy-95631488/Hendriansyah-Project.git
    ```
 
 2. **Navigate into the project folder**:
    ```bash
-   cd nextportfolio
+   cd Hendriansyah-Project
    ```
 
 3. **Install dependencies with PNPM**:
    ```bash
-   pnpm install
+   npm install
    ```
 
 4. **Start the development server**:
    ```bash
-   pnpm run dev
+   npm run dev / npx next dev --hostname 127.0.0.1 --port 80
    ```
 
 5. **Open your browser and visit**:

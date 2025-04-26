@@ -23,13 +23,13 @@ Before contributing, ensure you have the following tools installed:
 2. **Clone your fork**: Clone the forked repository to your local machine:
 
    ```bash
-   git clone https://github.com/kyy-95631488
+   git clone https://github.com/kyy-95631488/Hendriansyah-Project.git
    ```
 
 3. **Navigate to the project directory**:
 
    ```bash
-   cd nextportfolio
+   cd Hendriansyah-Project
    ```
 
 ## 🛠️ Installing Dependencies

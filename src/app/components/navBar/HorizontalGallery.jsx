@@ -20,7 +20,7 @@ const HorizontalGallery = ({ imageArray }) => {
             animate="animate"
             transition={{ duration: 0.7, delay: i * 0.08 }}
           >
-            <span className="text-[10px] mb-1 uppercase opacity-0 group-hover:opacity-100 transition-opacity font-medium text-center">
+            <span className="text-[10px] mb-1 uppercase opacity-0 group-hover:opacity-100 group-hover:text-blue-500 transition-all duration-300 font-medium text-center">
               {image.alt || `Image ${image.id}`}
             </span>
             <img

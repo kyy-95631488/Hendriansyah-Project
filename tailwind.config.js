@@ -56,12 +56,12 @@ module.exports = {
         },
       },
     },
-    colors: {
-      ...colors,
-      primary: colors.blue,         // Tetap biru standar
-      secondary: colors.sky,        // Ini diganti jadi biru "enak" (biru langit)
-      'dark-grey': '#121212',        // Tetap sama
-    },
+colors: {
+  ...colors,
+  primary: colors.blue,
+  secondary: colors.sky,
+  'dark-grey': '#121212',
+},
   },
 
   plugins: [

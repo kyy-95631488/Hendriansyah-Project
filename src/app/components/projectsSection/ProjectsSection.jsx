@@ -90,19 +90,25 @@ const ProjectsSection = () => {
       </div>
 
       <div className="flex justify-center">
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-20 lg:gap-12">
-          {filteredProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              imgUrl={project.imageUrl}
-              gitUrl={project.githubLink}
-              previewUrl={project.livePreviewLink}
-              technologies={getTechnologyIcons(project.technologies)}
-            />
-          ))}
-        </div>
+        {filteredProjects.length > 0 ? (
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-20 lg:gap-12">
+            {filteredProjects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                title={project.title}
+                description={project.description}
+                imgUrl={project.imageUrl}
+                gitUrl={project.githubLink}
+                previewUrl={project.livePreviewLink}
+                technologies={getTechnologyIcons(project.technologies)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-white text-center mt-8 text-xl">
+            There are no projects to tag {tag}.
+          </div>
+        )}
       </div>
     </section>
   );

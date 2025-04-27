@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { SiGithub, SiGooglechrome } from "react-icons/si";
 
 const ProjectCard = ({
   imgUrl,
@@ -56,7 +57,7 @@ const ProjectCard = ({
             technologies.map((Icon, index) => (
               <div key={index} className="group inline-flex">
                 <button
-                  className="rounded-full pointer-events-none border border-white p-2.5 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  className="rounded-full pointer-events-none border border-white p-2.5 text-center text-sm transition-all shadow-sm text-white hover:shadow-lg hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                   type="button"
                 >
                   {Icon}
@@ -71,9 +72,9 @@ const ProjectCard = ({
               href={previewUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md bg-slate-800 py-2 px-4 text-center text-sm text-white transition-all shadow-md hover:shadow-lg hover:bg-slate-700"
+              className="flex items-center justify-center gap-2 rounded-md bg-slate-800 py-2 px-4 text-center text-sm text-white transition-all shadow-md hover:shadow-lg hover:bg-slate-700"
             >
-              Live Preview
+              <SiGooglechrome size={18} /> Live Preview
             </a>
           )}
           {gitUrl && (
@@ -81,9 +82,9 @@ const ProjectCard = ({
               href={gitUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md py-2 px-4 text-center text-sm text-white bg-secondary-500 transition-all shadow-md hover:shadow-lg hover:bg-slate-700"
+              className="flex items-center justify-center gap-2 rounded-md py-2 px-4 text-center text-sm text-white bg-secondary-500 transition-all shadow-md hover:shadow-lg hover:bg-slate-700"
             >
-              View on GitHub
+              <SiGithub size={18} /> View on GitHub
             </a>
           )}
         </div>

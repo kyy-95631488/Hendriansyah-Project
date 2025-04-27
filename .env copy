@@ -1,0 +1,5 @@
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=your@gmail.com
+SMTP_PASS=
+NEXT_PUBLIC_SUPABASE_URL=https://your.supabase.co
+NEXT_PUBLIC_SUPABASE_KEY=

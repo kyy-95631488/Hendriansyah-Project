@@ -53,13 +53,13 @@ const ProjectCard = ({
 
         <div className="flex flex-wrap items-center justify-center gap-2 my-3">
           {technologies &&
-            technologies.map((tech) => (
-              <div key={tech.id} className="group inline-flex">
+            technologies.map((Icon, index) => (
+              <div key={index} className="group inline-flex">
                 <button
                   className="rounded-full pointer-events-none border border-white p-2.5 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                   type="button"
                 >
-                  <img src={tech.logo} alt={tech.name} className="w-4 h-4" />
+                  {Icon}
                 </button>
               </div>
             ))}

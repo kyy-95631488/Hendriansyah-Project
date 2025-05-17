@@ -43,21 +43,15 @@ const HeroSection = () => {
               sequence={[
                 "Hendriansyah Rizky Setiawan",
                 800,
-                "Android Dev",
+                "an Android app developer",
                 800,
-                "Java Application ",
+                "a React & Next.js developer",
                 800,
-                "React",
+                "a PHP & MySQL backend builder",
                 800,
-                "PHP",
+                "skilled with Firebase & GCP",
                 800,
-                "MySql",
-                800,
-                "Firebase",
-                800,
-                "Google Cloud",
-                800,
-                "Azure",
+                "constantly learning and creating",
                 800,
               ]}
               wrapper="span"
@@ -70,10 +64,9 @@ const HeroSection = () => {
             variants={itemVariants}
             className="text-[#ADB7BE] text-base sm:text-lg mb-6 lg:text-xl text-wrap lg:mr-20 md:mr-20 md:pr-20"
           >
-            I&apos;m a software developer passionate about building mobile apps with Kotlin,
-            web applications with React and PHP, and cloud solutions using Firebase,
-            Google Cloud, and Azure.
+            I&apos;m a software developer passionate about crafting mobile applications using Kotlin, building web apps with React and PHP, and deploying cloud-powered solutions using Firebase, Google Cloud, and Azure.
           </motion.p>
+
           <div>
             <a
               href="https://www.linkedin.com/in/hendriansyah-rizky-setiawan-8b4a68308/"
@@ -87,13 +80,14 @@ const HeroSection = () => {
                 Hire Me
               </motion.button>
             </a>
+
             <motion.button
               variants={itemVariants}
               className="px-1 py-1 w-full sm:w-fit rounded-full bg-transparent hover:bg-slate-800 text-white mt-3 bg-gradient-to-br from-primary-500 via-secondary-600 to-secondary-500"
             >
               <a
                 href="/curriculum/CV Resume - Hendriansyah Rizky Setiawan - Android.pdf"
-                download="Curriculo_Jorge_Felipe.pdf"
+                download="CV_Resume_-_Hendriansyah_Rizky_Setiawan.pdf"
                 className="block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2"
               >
                 Download CV
@@ -101,6 +95,7 @@ const HeroSection = () => {
             </motion.button>
           </div>
         </div>
+
         <div className="col-span-4 place-self-center mt-4 lg:mt-0 md:ml-20 hidden lg:block md:block">
           <motion.div
             initial={{ x: "100%", opacity: 0 }}
@@ -112,7 +107,7 @@ const HeroSection = () => {
             <Image
               className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 rounded-full"
               src="/images/pribadi-kartun.png"
-              alt="hero image"
+              alt="Hero image"
               width={380}
               height={380}
             />

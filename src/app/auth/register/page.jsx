@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-undef */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -59,6 +59,8 @@ const Register = () => {
       window.location.href = "./login";
     }
   };
+  
+  const MemoizedParticles = useMemo(() => <ParticlesComponent id="particles" />, []);
 
   if (pageLoading) {
     return (
@@ -229,8 +231,8 @@ const Register = () => {
       <Footer />
 
       {/* Particle Background */}
-      <div id="particles" className="fixed top-0 left-0 w-full h-full z-10 pointer-events-none">
-        <ParticlesComponent id="particles" />
+      <div id="particles" className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none">
+        {MemoizedParticles}
       </div>
 
       {/* Toast Notification Container */}

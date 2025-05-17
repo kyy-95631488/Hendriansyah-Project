@@ -107,11 +107,11 @@ const NavBar = () => {
               </>
             ) : (
               <li>
-                <Link href="auth/login">
+                {/* <Link href="auth/login">
                   <button className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold py-2 px-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out">
                     Login
                   </button>
-                </Link>
+                </Link> */}
               </li>
             )}
           </ul>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { supabase } from "../../lib/supabase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,6 +23,8 @@ const CreateProject = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [livePreviewLink, setLivePreviewLink] = useState(""); // New state for Live Preview Link
   const [githubLink, setGithubLink] = useState(""); // New state for GitHub Link
+
+  const MemoizedParticles = useMemo(() => <ParticlesComponent id="particles" />, []);
 
   const handleTagChange = (tag) => {
     setTags((prevTags) => {
@@ -273,8 +275,8 @@ const CreateProject = () => {
       <Footer />
 
       {/* Particles Background */}
-      <div className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none">
-        <ParticlesComponent id="particles" />
+      <div id="particles" className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none">
+        {MemoizedParticles}
       </div>
     </main>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Bars3Icon, XMarkIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import MenuOverlay from "../../components/navBar/MenuOverlay";
@@ -83,6 +83,8 @@ const Login = () => {
 
     setLoading(false);
   };
+
+  const MemoizedParticles = useMemo(() => <ParticlesComponent id="particles" />, []);
 
   if (pageLoading) {
     return (
@@ -252,7 +254,7 @@ const Login = () => {
 
       {/* Particle Background */}
       <div id="particles" className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none">
-        <ParticlesComponent id="particles" />
+        {MemoizedParticles}
       </div>
     </main>
   );

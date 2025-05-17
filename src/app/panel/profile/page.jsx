@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -24,6 +24,8 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileName, setFileName] = useState("");
+
+  const MemoizedParticles = useMemo(() => <ParticlesComponent id="particles" />, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -270,7 +272,7 @@ const Profile = () => {
 
       {/* Particles */}
       <div id="particles" className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none">
-        <ParticlesComponent id="particles" />
+        {MemoizedParticles}
       </div>
     </main>
   );

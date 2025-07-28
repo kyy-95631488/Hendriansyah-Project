@@ -169,7 +169,7 @@ export default function ProjectsSection() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        Projects
+        My Projects
       </motion.h2>
       <motion.p
         className="text-sm sm:text-base md:text-lg text-gray-300 max-w-3xl mx-auto mb-8 sm:mb-10 lg:mb-12 text-center"

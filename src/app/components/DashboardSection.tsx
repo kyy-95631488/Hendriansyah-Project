@@ -51,7 +51,7 @@ export default function DashboardSection() {
         })) as Project[];
         setProjects(projectData);
       } else {
-        router.push("/login");
+        router.push("/auth/login");
       }
       setIsLoading(false);
     });
@@ -63,7 +63,7 @@ export default function DashboardSection() {
     setIsLoggingOut(true);
     try {
       await signOut(auth);
-      router.push("/login");
+      router.push("/auth/login");
     } catch (error: unknown) {
       setPopup({ message: "Failed to log out. Please try again.", type: "error" });
     } finally {

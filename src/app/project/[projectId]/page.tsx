@@ -4,11 +4,31 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
-import { auth } from "../../auth/firebase/firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
 import { FaArrowLeft, FaLink } from "react-icons/fa";
 import { Globe, Smartphone, Monitor, FileText, Code, Calendar, Image as ImageIcon } from "lucide-react";
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// User ID constant (consistent with ProjectsSection)
+const USER_ID = process.env.NEXT_PUBLIC_USER_ID;
+
+if (!USER_ID) {
+  throw new Error("Environment variable NEXT_PUBLIC_USER_ID is not set");
+}
 
 // Define the Project type
 interface Project {
@@ -27,58 +47,58 @@ interface Project {
 
 export default function ProjectDetail() {
   const [project, setProject] = useState<Project | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [status, setStatus] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
-  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const router = useRouter();
   const params = useParams();
-  const db = getFirestore();
   const projectId = params.projectId as string;
 
+  // Fetch project data
   useEffect(() => {
     if (!projectId) {
-      setStatus("Error: Invalid project ID");
-      router.push("/");
+      setError("Invalid project ID");
+      setIsLoading(false);
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const projectRef = doc(db, `users/${firebaseUser.uid}/projects`, projectId);
-          const projectSnap = await getDoc(projectRef);
-          if (projectSnap.exists()) {
-            setProject({ id: projectSnap.id, ...projectSnap.data() } as Project);
-          } else {
-            setStatus("Error: Project not found");
-            router.push("/");
-          }
-        } catch (error) {
-          console.error("Error fetching project:", error);
-          setStatus("Error: Failed to load project");
-          router.push("/");
+    const fetchProject = async () => {
+      try {
+        // Corrected Firestore path to include user ID
+        const projectRef = doc(db, `users/${USER_ID}/projects`, projectId);
+        const projectSnap = await getDoc(projectRef);
+
+        if (projectSnap.exists()) {
+          setProject({ id: projectSnap.id, ...projectSnap.data() } as Project);
+        } else {
+          setError("Project not found");
         }
-      } else {
-        router.push("/");
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(`Failed to load project: ${error.message}`);
+        } else {
+          setError("Failed to load project: Unknown error occurred");
+        }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    };
 
-    return () => unsubscribe();
-  }, [router, projectId, db]);
+    fetchProject();
+  }, [projectId]);
 
-  // Close modal when clicking outside or pressing Escape
+  // Handle modal close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setSelectedImage(null);
         setZoomLevel(1);
-        setPosition({ x: 0, y: 0 }); // Reset position when closing modal
+        setPosition({ x: 0, y: 0 });
       }
     };
     window.addEventListener("keydown", handleEscape);
@@ -117,7 +137,7 @@ export default function ProjectDetail() {
         const touch2 = e.touches[1];
         const distance = Math.sqrt(
           Math.pow(touch2.clientX - touch1.clientX, 2) +
-          Math.pow(touch2.clientY - touch1.clientY, 2)
+            Math.pow(touch2.clientY - touch1.clientY, 2)
         );
 
         if (initialDistance !== null) {
@@ -257,10 +277,10 @@ export default function ProjectDetail() {
     );
   }
 
-  if (!project) {
+  if (error || !project) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 via-blue-950 to-black">
-        <p className="text-red-400 text-lg">{status}</p>
+        <p className="text-red-400 text-lg">{error || "Project not found"}</p>
       </div>
     );
   }
@@ -331,8 +351,10 @@ export default function ProjectDetail() {
             onClick={() => {
               setSelectedImage(project.thumbnailUrl || "https://placehold.co/1920x1080");
               setZoomLevel(1);
-              setPosition({ x: 0, y: 0 }); // Reset position when opening new image
+              setPosition({ x: 0, y: 0 });
             }}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPFZ33aAAAAABJRU5ErkJggg=="
           />
         </motion.div>
 
@@ -368,6 +390,8 @@ export default function ProjectDetail() {
                   onError={(e) => {
                     e.currentTarget.src = "/images/skills/default.png";
                   }}
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPFZ33aAAAAABJRU5ErkJggg=="
                 />
                 <span className="text-gray-200 text-sm sm:text-base">{tech}</span>
               </motion.div>
@@ -453,8 +477,10 @@ export default function ProjectDetail() {
                     onClick={() => {
                       setSelectedImage(url || "https://placehold.co/1920x1080");
                       setZoomLevel(1);
-                      setPosition({ x: 0, y: 0 }); // Reset position when opening new image
+                      setPosition({ x: 0, y: 0 });
                     }}
+                    placeholder="blur"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPFZ33aAAAAABJRU5ErkJggg=="
                   />
                 </motion.div>
               ))}
@@ -474,7 +500,7 @@ export default function ProjectDetail() {
             onClick={() => {
               setSelectedImage(null);
               setZoomLevel(1);
-              setPosition({ x: 0, y: 0 }); // Reset position when closing modal
+              setPosition({ x: 0, y: 0 });
             }}
           >
             <motion.div
@@ -503,6 +529,8 @@ export default function ProjectDetail() {
                   onError={(e) => {
                     e.currentTarget.src = "https://placehold.co/1920x1080";
                   }}
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPFZ33aAAAAABJRU5ErkJggg=="
                 />
               </motion.div>
               <button
@@ -510,7 +538,7 @@ export default function ProjectDetail() {
                 onClick={() => {
                   setSelectedImage(null);
                   setZoomLevel(1);
-                  setPosition({ x: 0, y: 0 }); // Reset position when closing modal
+                  setPosition({ x: 0, y: 0 });
                 }}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

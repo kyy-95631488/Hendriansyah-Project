@@ -5,9 +5,22 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { auth } from "../auth/firebase/firebase";
-import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // Define the Project type
 interface Project {
@@ -18,69 +31,88 @@ interface Project {
   platform: "web" | "mobile" | "desktop";
 }
 
+// User ID constant
+const USER_ID = process.env.NEXT_PUBLIC_USER_ID;
+
+if (!USER_ID) {
+  throw new Error("Environment variable NEXT_PUBLIC_USER_ID is not set");
+}
+
+// Fetch projects from Firestore
+async function fetchProjects(): Promise<Project[]> {
+  try {
+    const projectsCollection = collection(db, `users/${USER_ID}/projects`);
+    const projectsSnapshot = await getDocs(projectsCollection);
+
+    if (projectsSnapshot.empty) {
+      throw new Error("No projects found for this user.");
+    }
+
+    return projectsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      title: doc.data().title || "Untitled",
+      description: doc.data().description || "No description available",
+      thumbnailUrl: doc.data().thumbnailUrl || "https://placehold.co/1920x1080",
+      platform: (doc.data().platform as "web" | "mobile" | "desktop") || "web",
+    }));
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch projects: ${error.message}`);
+    } else {
+      throw new Error("Failed to fetch projects: Unknown error occurred.");
+    }
+  }
+}
+
 export default function ProjectsSection() {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<"all" | "web" | "mobile" | "desktop">("all");
   const containerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const router = useRouter();
-  const db = getFirestore();
 
-  // Fetch projects from Firebase
+  // Fetch projects on component mount
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-        try {
-          const projectsCollection = collection(db, `users/${firebaseUser.uid}/projects`);
-          const projectsSnapshot = await getDocs(projectsCollection);
-          const projectsData: Project[] = projectsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            title: doc.data().title,
-            description: doc.data().description,
-            thumbnailUrl: doc.data().thumbnailUrl,
-            platform: doc.data().platform,
-          }));
-          setProjects(projectsData);
-        } catch (error) {
-          console.error("Error fetching projects:", error);
+    const loadProjects = async () => {
+      try {
+        const fetchedProjects = await fetchProjects();
+        setProjects(fetchedProjects);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unexpected error occurred.");
         }
-      } else {
-        router.push("/");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
-    return () => unsubscribe();
-  }, [router, db]);
+    };
 
-  // Filter projects based on selected platform
-  const filteredProjects =
-    selectedPlatform === "all"
-      ? projects
-      : projects.filter((project) => project.platform === selectedPlatform);
+    loadProjects();
+  }, []);
 
   // Update scroll button states
-  const updateScrollButtons = () => {
-    if (containerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-  };
-
-  // Scroll event listener
   useEffect(() => {
+    const updateScrollButtons = () => {
+      if (containerRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+        setCanScrollLeft(scrollLeft > 0);
+        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+      }
+    };
+
     const container = containerRef.current;
     if (container) {
       container.addEventListener("scroll", updateScrollButtons);
       updateScrollButtons();
       return () => container.removeEventListener("scroll", updateScrollButtons);
     }
-  }, [filteredProjects]);
+  }, [projects]);
 
+  // Scroll handlers
   const scrollLeft = () => {
     if (containerRef.current) {
       const cardWidth = window.innerWidth < 640 ? 260 : window.innerWidth < 1024 ? 300 : 340;
@@ -94,6 +126,10 @@ export default function ProjectsSection() {
       containerRef.current.scrollBy({ left: cardWidth, behavior: "smooth" });
     }
   };
+
+  // Filter projects by platform
+  const filteredProjects =
+    selectedPlatform === "all" ? projects : projects.filter((project) => project.platform === selectedPlatform);
 
   if (isLoading) {
     return (
@@ -116,6 +152,14 @@ export default function ProjectsSection() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-400 text-lg">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <section className="w-full flex flex-col items-center justify-start px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-16 lg:py-20 relative overflow-y-auto">
       <motion.h2
@@ -125,7 +169,7 @@ export default function ProjectsSection() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        My Projects
+        Projects
       </motion.h2>
       <motion.p
         className="text-sm sm:text-base md:text-lg text-gray-300 max-w-3xl mx-auto mb-8 sm:mb-10 lg:mb-12 text-center"
@@ -134,7 +178,7 @@ export default function ProjectsSection() {
         transition={{ duration: 0.5, delay: 0.2 }}
         viewport={{ once: true }}
       >
-        Explore a collection of my work across web, mobile, and desktop platforms. Each project showcases innovative solutions designed to solve real-world challenges with seamless user experiences and cutting-edge technology.
+        Explore a collection of projects across web, mobile, and desktop platforms. Each project showcases innovative solutions designed to solve real-world challenges with seamless user experiences and cutting-edge technology.
       </motion.p>
 
       {/* Platform Selection Dropdown */}
@@ -147,7 +191,7 @@ export default function ProjectsSection() {
       >
         <select
           value={selectedPlatform}
-          onChange={(e) => setSelectedPlatform(e.target.value)}
+          onChange={(e) => setSelectedPlatform(e.target.value as "all" | "web" | "mobile" | "desktop")}
           className="w-full bg-white/5 backdrop-blur-lg border border-blue-500/20 rounded-lg py-2 px-4 text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all" className="bg-gray-900">All Platforms</option>
@@ -176,7 +220,7 @@ export default function ProjectsSection() {
           className="flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 pb-4 sm:pb-6 snap-x snap-mandatory overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] touch-auto px-4 sm:px-6 md:px-8 lg:px-10"
           style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
         >
-          {filteredProjects.map((project: Project, index: number) => (
+          {filteredProjects.map((project, index) => (
             <motion.div
               key={project.id}
               className="relative bg-white/5 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-2xl shadow-xl border border-blue-500/20 overflow-hidden flex-none w-[260px] sm:w-[300px] lg:w-[340px] snap-center"
@@ -187,7 +231,7 @@ export default function ProjectsSection() {
             >
               <div className="relative w-full h-[160px] sm:h-[180px] lg:h-[220px] mb-4">
                 <Image
-                  src={project.thumbnailUrl || "https://placehold.co/1920x1080"}
+                  src={project.thumbnailUrl}
                   alt={project.title}
                   width={1920}
                   height={1080}

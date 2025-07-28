@@ -1,13 +1,13 @@
 # Portfolio Project Documentation
 
-## Overview
-
-This project is a personal portfolio website for Hendriansyah Rizky Setiawan, a Full-Stack Developer specializing in web and mobile applications. Built using **Next.js**, **React**, and **Firebase**, it showcases skills, projects, and educational background in a modern, responsive, and interactive interface. The portfolio supports user authentication, project management, and multilingual content, with dynamic sections for home, about, education, skills, projects, and contact.
-
 ![Portfolio Website Overview](./assets/overview.png)  
 *Screenshot of the portfolio website showcasing its modern and responsive design.*
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/kyy-95631488/hendriansyah-project)
+
+## Overview
+
+This project is a personal portfolio website for Hendriansyah Rizky Setiawan, a Full-Stack Developer specializing in web and mobile applications. Built using **Next.js**, **React**, and **Firebase**, it showcases skills, projects, and educational background in a modern, responsive, and interactive interface. The portfolio supports user authentication, project management, and multilingual content, with dynamic sections for home, about, education, skills, projects, and contact.
 
 Key features include:
 - **User Authentication**: Register and login functionality using Firebase Authentication.

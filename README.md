@@ -70,6 +70,8 @@ To set up and run the project locally, follow these steps:
    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-firebase-sender-id
    NEXT_PUBLIC_FIREBASE_APP_ID=your-firebase-app-id
 
+   NEXT_PUBLIC_USER_ID=your-userid-from-firestore
+
    NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
    ```

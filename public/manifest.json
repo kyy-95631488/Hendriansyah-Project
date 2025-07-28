@@ -1,0 +1,21 @@
+{
+  "name": "Hendriansyah Rizky Setiawan - Portfolio",
+  "short_name": "Hendriansyah Portfolio",
+  "description": "Portfolio showcasing my skills and projects as a Full-Stack Developer.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A23",
+  "theme_color": "#38BDF8",
+  "icons": [
+    {
+      "src": "/images/logo-hr.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo-hr.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+create policy "Authenticated users can upload"
+on storage.objects
+for insert
+with check (auth.uid() is not null and bucket_id = 'project-assets');
